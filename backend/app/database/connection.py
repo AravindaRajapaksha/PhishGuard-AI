@@ -26,9 +26,14 @@ engine = create_engine(
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+_db_initialized: bool = False
+
 
 def get_db() -> Generator[Session, None, None]:
     """Yield a SQLAlchemy database session per request."""
+    global _db_initialized
+    if not _db_initialized:
+        init_db_and_sync_model_version()
     db = SessionLocal()
     try:
         yield db
@@ -38,7 +43,9 @@ def get_db() -> Generator[Session, None, None]:
 
 def init_db_and_sync_model_version() -> None:
     """Create tables if they do not exist and register the active ML model version."""
+    global _db_initialized
     Base.metadata.create_all(bind=engine)
+    _db_initialized = True
 
     try:
         bundle = ModelRegistry.load(settings.MODEL_VERSION)

@@ -26,9 +26,9 @@ def test_extract_url_features_clean_legitimate_url() -> None:
     features = extract_url_features(url)
     assert list(features.keys()) == FEATURE_NAMES
     assert features["url_length"] == len(url)
-    assert features["hostname_length"] == len("www.wikipedia.org")
+    assert features["hostname_length"] == len("wikipedia.org")
     assert features["domain_length"] == len("wikipedia.org")
-    assert features["subdomain_count"] == 1
+    assert features["subdomain_count"] == 0
     assert features["is_https"] == 1
     assert features["is_ip_address"] == 0
     assert features["has_punycode"] == 0

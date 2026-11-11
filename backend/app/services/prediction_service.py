@@ -6,13 +6,15 @@ import time
 from typing import Any
 from urllib.parse import urlsplit
 
-import numpy as np
-import pandas as pd
-
-from app.ml.model_loader import DEFAULT_MODEL_VERSION, ModelRegistry
+from app.ml.model_loader import (
+    DEFAULT_MODEL_VERSION,
+    JsonXGBoostPredictor,
+    ModelRegistry,
+)
 from app.services.feature_extraction import (
     FEATURE_METADATA,
     FEATURE_NAMES,
+    extract_feature_vector,
     extract_url_features,
     generate_risk_signals,
 )
@@ -38,15 +40,26 @@ class PredictionService:
         hostname = (urlsplit(normalized_url).hostname or "").lower().rstrip(".")
 
         features = extract_url_features(normalized_url)
-        feature_df = pd.DataFrame([features], columns=FEATURE_NAMES)
+        feature_vector = extract_feature_vector(normalized_url)
 
         bundle = ModelRegistry.load(self.model_version)
-        X_input: Any = feature_df
-        if bundle.scaler is not None:
-            X_input = bundle.scaler.transform(feature_df)
 
-        proba = bundle.model.predict_proba(X_input)[0]
-        phishing_score = round(float(np.clip(proba[1], 0.0, 1.0)), 4)
+        if isinstance(bundle.model, JsonXGBoostPredictor):
+            proba = bundle.model.predict_proba([feature_vector])[0]
+        else:
+            try:
+                import pandas as pd  # type: ignore[import-not-found]
+
+                X_input: Any = pd.DataFrame([features], columns=FEATURE_NAMES)
+            except ImportError:
+                X_input = [feature_vector]
+
+            if bundle.scaler is not None:
+                X_input = bundle.scaler.transform(X_input)
+            proba = bundle.model.predict_proba(X_input)[0]
+
+        raw_score = float(proba[1])
+        phishing_score = round(max(0.0, min(1.0, raw_score)), 4)
 
         thresholds = bundle.metadata.get(
             "decision_thresholds", {"low": 0.35, "high": 0.65}
@@ -66,7 +79,6 @@ class PredictionService:
 
         risk_signals = generate_risk_signals(normalized_url, features)
 
-        # Enrich extracted features with metadata for UI presentation
         feature_details = [
             {
                 "name": name,

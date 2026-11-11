@@ -332,12 +332,21 @@ def extract_url_features(url: str) -> dict[str, float | int]:
         parsed = urlsplit("http://invalid.local")
 
     scheme = (parsed.scheme or "http").lower()
-    hostname = (parsed.hostname or "").lower().rstrip(".")
+    raw_hostname = (parsed.hostname or "").lower().rstrip(".")
+    hostname = raw_hostname[4:] if raw_hostname.startswith("www.") else raw_hostname
     path = parsed.path or ""
     query = parsed.query or ""
 
     registrable_domain = extract_registrable_domain(hostname)
     subdomain_count = extract_subdomain_count(hostname)
+
+    # Canonicalize leading 'www.' out of dot_count so bare domains (e.g. chatgpt.com)
+    # and www-prefixed domains (www.chatgpt.com) are evaluated identically.
+    canonical_for_dots = (
+        re.sub(r"^(https?://)www\.", r"\1", cleaned, count=1, flags=re.IGNORECASE)
+        if raw_hostname.startswith("www.")
+        else cleaned
+    )
 
     url_length = len(cleaned)
     hostname_length = len(hostname)
@@ -345,7 +354,7 @@ def extract_url_features(url: str) -> dict[str, float | int]:
     path_length = len(path)
     query_length = len(query)
 
-    dot_count = cleaned.count(".")
+    dot_count = canonical_for_dots.count(".")
     hyphen_count = cleaned.count("-")
     hostname_hyphen_count = hostname.count("-")
     underscore_count = cleaned.count("_")

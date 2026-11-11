@@ -60,7 +60,8 @@ def test_validate_rejects_excessive_length_and_whitespace() -> None:
 
 def test_extract_registrable_domain_and_subdomains() -> None:
     assert extract_registrable_domain("www.google.com") == "google.com"
-    assert extract_subdomain_count("www.google.com") == 1
+    assert extract_subdomain_count("www.google.com") == 0
+    assert extract_subdomain_count("mail.google.com") == 1
 
     assert (
         extract_registrable_domain("a.b.portal.university.ac.uk")

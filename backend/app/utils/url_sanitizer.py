@@ -195,10 +195,12 @@ def extract_registrable_domain(hostname: str) -> str:
 
 
 def extract_subdomain_count(hostname: str) -> int:
-    """Count the number of subdomain levels preceding the registrable domain."""
+    """Count the number of non-www subdomain levels preceding the registrable domain."""
     if not hostname:
         return 0
     host_clean = hostname.lower().strip().rstrip(".")
+    if host_clean.startswith("www."):
+        host_clean = host_clean[4:]
     if is_ip_literal(host_clean) or host_clean == "localhost":
         return 0
 

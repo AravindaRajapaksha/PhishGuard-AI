@@ -1,0 +1,459 @@
+{
+  "version": "v1.0.0",
+  "artifact_directory": "v1",
+  "selected_model_key": "xgboost",
+  "selected_model_name": "XGBoost",
+  "hyperparameters": {
+    "n_estimators": 300,
+    "max_depth": 8,
+    "learning_rate": 0.1,
+    "subsample": 0.85,
+    "colsample_bytree": 0.85
+  },
+  "trained_at": "2026-11-11T06:21:30.622636+00:00",
+  "dataset": {
+    "name": "Hannousse & Yahiouche (2021) Phishing URL Benchmark + UCI PhiUSIIL (2024) Root Supplement",
+    "license": "CC BY 4.0 (Creative Commons Attribution 4.0 International)",
+    "sources": [
+      "Hannousse & Yahiouche (2021), Engineering Applications of Artificial Intelligence, Vol. 104 (11,430 raw URLs, CC BY 4.0)",
+      "Prasad & Chandra (2024), UCI Machine Learning Repository ID 967 \u2014 PhiUSIIL Phishing URL Dataset (3,000 path-matched root URLs, CC BY 4.0)"
+    ],
+    "audit": {
+      "raw_records_downloaded": 14430,
+      "missing_or_invalid_removed": 1,
+      "duplicate_records_removed": 18,
+      "conflicting_label_records_removed": 0,
+      "final_cleaned_records": 14411,
+      "legitimate_count": 7214,
+      "phishing_count": 7197,
+      "unique_registrable_domains": 8884,
+      "train_records": 10087,
+      "validation_records": 2162,
+      "test_records": 2162
+    }
+  },
+  "feature_count": 24,
+  "feature_names": [
+    "url_length",
+    "hostname_length",
+    "domain_length",
+    "path_length",
+    "query_length",
+    "dot_count",
+    "hyphen_count",
+    "hostname_hyphen_count",
+    "underscore_count",
+    "slash_count",
+    "digit_count",
+    "hostname_digit_count",
+    "special_char_count",
+    "at_symbol_present",
+    "subdomain_count",
+    "is_https",
+    "is_ip_address",
+    "has_punycode",
+    "suspicious_keyword_count",
+    "query_param_count",
+    "url_entropy",
+    "hostname_entropy",
+    "digit_to_length_ratio",
+    "suspicious_hostname_pattern"
+  ],
+  "decision_thresholds": {
+    "low": 0.35,
+    "high": 0.65,
+    "policy_description": "Scores < 0.35 classify as 'legitimate'; scores in [0.35, 0.65) classify as 'suspicious' (uncertain/borderline); scores >= 0.65 classify as 'phishing'."
+  },
+  "validation_metrics": {
+    "accuracy": 0.9214,
+    "precision": 0.9221,
+    "recall": 0.9204,
+    "f1_score": 0.9212,
+    "roc_auc": 0.9734,
+    "pr_auc": 0.9736,
+    "confusion_matrix": {
+      "tn": 998,
+      "fp": 84,
+      "fn": 86,
+      "tp": 994,
+      "false_positive_rate": 0.0776,
+      "false_negative_rate": 0.0796
+    }
+  },
+  "test_metrics": {
+    "accuracy": 0.9015,
+    "precision": 0.8965,
+    "recall": 0.9073,
+    "f1_score": 0.9019,
+    "roc_auc": 0.9646,
+    "pr_auc": 0.9648,
+    "confusion_matrix": {
+      "tn": 970,
+      "fp": 113,
+      "fn": 100,
+      "tp": 979,
+      "false_positive_rate": 0.1043,
+      "false_negative_rate": 0.0927
+    }
+  },
+  "domain_grouped_test_metrics": {
+    "accuracy": 0.886,
+    "precision": 0.8537,
+    "recall": 0.8901,
+    "f1_score": 0.8715,
+    "roc_auc": 0.9554,
+    "pr_auc": 0.943,
+    "confusion_matrix": {
+      "tn": 1318,
+      "fp": 175,
+      "fn": 126,
+      "tp": 1021,
+      "false_positive_rate": 0.1172,
+      "false_negative_rate": 0.1099
+    },
+    "train_domains": 7107,
+    "test_domains": 1777,
+    "domain_overlap_count": 0
+  },
+  "candidate_models": [
+    {
+      "key": "xgboost",
+      "name": "XGBoost",
+      "hyperparameters": {
+        "n_estimators": 300,
+        "max_depth": 8,
+        "learning_rate": 0.1,
+        "subsample": 0.85,
+        "colsample_bytree": 0.85
+      },
+      "validation_metrics": {
+        "accuracy": 0.9214,
+        "precision": 0.9221,
+        "recall": 0.9204,
+        "f1_score": 0.9212,
+        "roc_auc": 0.9734,
+        "pr_auc": 0.9736,
+        "confusion_matrix": {
+          "tn": 998,
+          "fp": 84,
+          "fn": 86,
+          "tp": 994,
+          "false_positive_rate": 0.0776,
+          "false_negative_rate": 0.0796
+        }
+      },
+      "test_metrics": {
+        "accuracy": 0.9015,
+        "precision": 0.8965,
+        "recall": 0.9073,
+        "f1_score": 0.9019,
+        "roc_auc": 0.9646,
+        "pr_auc": 0.9648,
+        "confusion_matrix": {
+          "tn": 970,
+          "fp": 113,
+          "fn": 100,
+          "tp": 979,
+          "false_positive_rate": 0.1043,
+          "false_negative_rate": 0.0927
+        }
+      },
+      "is_selected": true
+    },
+    {
+      "key": "random_forest",
+      "name": "Random Forest",
+      "hyperparameters": {
+        "n_estimators": 300,
+        "max_depth": null,
+        "min_samples_leaf": 2
+      },
+      "validation_metrics": {
+        "accuracy": 0.9098,
+        "precision": 0.9063,
+        "recall": 0.9139,
+        "f1_score": 0.9101,
+        "roc_auc": 0.9687,
+        "pr_auc": 0.9691,
+        "confusion_matrix": {
+          "tn": 980,
+          "fp": 102,
+          "fn": 93,
+          "tp": 987,
+          "false_positive_rate": 0.0943,
+          "false_negative_rate": 0.0861
+        }
+      },
+      "test_metrics": {
+        "accuracy": 0.895,
+        "precision": 0.888,
+        "recall": 0.9036,
+        "f1_score": 0.8957,
+        "roc_auc": 0.9621,
+        "pr_auc": 0.9626,
+        "confusion_matrix": {
+          "tn": 960,
+          "fp": 123,
+          "fn": 104,
+          "tp": 975,
+          "false_positive_rate": 0.1136,
+          "false_negative_rate": 0.0964
+        }
+      },
+      "is_selected": false
+    },
+    {
+      "key": "decision_tree",
+      "name": "Decision Tree",
+      "hyperparameters": {
+        "max_depth": 16,
+        "min_samples_leaf": 20
+      },
+      "validation_metrics": {
+        "accuracy": 0.8682,
+        "precision": 0.863,
+        "recall": 0.875,
+        "f1_score": 0.869,
+        "roc_auc": 0.9398,
+        "pr_auc": 0.9372,
+        "confusion_matrix": {
+          "tn": 932,
+          "fp": 150,
+          "fn": 135,
+          "tp": 945,
+          "false_positive_rate": 0.1386,
+          "false_negative_rate": 0.125
+        }
+      },
+      "test_metrics": {
+        "accuracy": 0.8474,
+        "precision": 0.8395,
+        "recall": 0.8582,
+        "f1_score": 0.8488,
+        "roc_auc": 0.9273,
+        "pr_auc": 0.9213,
+        "confusion_matrix": {
+          "tn": 906,
+          "fp": 177,
+          "fn": 153,
+          "tp": 926,
+          "false_positive_rate": 0.1634,
+          "false_negative_rate": 0.1418
+        }
+      },
+      "is_selected": false
+    },
+    {
+      "key": "logistic_regression",
+      "name": "Logistic Regression",
+      "hyperparameters": {
+        "C": 10.0,
+        "max_iter": 1000,
+        "scaled": true
+      },
+      "validation_metrics": {
+        "accuracy": 0.8182,
+        "precision": 0.8538,
+        "recall": 0.7676,
+        "f1_score": 0.8084,
+        "roc_auc": 0.9066,
+        "pr_auc": 0.9097,
+        "confusion_matrix": {
+          "tn": 940,
+          "fp": 142,
+          "fn": 251,
+          "tp": 829,
+          "false_positive_rate": 0.1312,
+          "false_negative_rate": 0.2324
+        }
+      },
+      "test_metrics": {
+        "accuracy": 0.8159,
+        "precision": 0.8422,
+        "recall": 0.7766,
+        "f1_score": 0.8081,
+        "roc_auc": 0.9058,
+        "pr_auc": 0.9119,
+        "confusion_matrix": {
+          "tn": 926,
+          "fp": 157,
+          "fn": 241,
+          "tp": 838,
+          "false_positive_rate": 0.145,
+          "false_negative_rate": 0.2234
+        }
+      },
+      "is_selected": false
+    }
+  ],
+  "feature_importances": [
+    {
+      "feature": "suspicious_keyword_count",
+      "label": "Suspicious Keyword Count",
+      "category": "Deception & Obfuscation",
+      "importance": 0.2528,
+      "description": "Count of authentication, urgency, or brand-lure keywords in the URL."
+    },
+    {
+      "feature": "hostname_digit_count",
+      "label": "Hostname Digit Count",
+      "category": "Character Counts",
+      "importance": 0.1439,
+      "description": "Count of numeric digits (0-9) inside the hostname."
+    },
+    {
+      "feature": "dot_count",
+      "label": "Dot Count (.)",
+      "category": "Character Counts",
+      "importance": 0.0892,
+      "description": "Total number of dot ('.') characters in the URL."
+    },
+    {
+      "feature": "is_https",
+      "label": "HTTPS Scheme Indicator",
+      "category": "Domain & Protocol",
+      "importance": 0.0596,
+      "description": "Indicates whether the URL uses the HTTPS scheme (1 = https, 0 = http). Note: HTTPS does not imply a website is safe."
+    },
+    {
+      "feature": "at_symbol_present",
+      "label": "@ Symbol Indicator",
+      "category": "Deception & Obfuscation",
+      "importance": 0.0479,
+      "description": "Indicates presence of '@' credential/redirection symbol (1 = present, 0 = absent)."
+    },
+    {
+      "feature": "underscore_count",
+      "label": "Underscore Count (_)",
+      "category": "Character Counts",
+      "importance": 0.0373,
+      "description": "Total number of underscore ('_') characters in the URL."
+    },
+    {
+      "feature": "digit_count",
+      "label": "Total Digit Count",
+      "category": "Character Counts",
+      "importance": 0.0357,
+      "description": "Total count of numeric digits (0-9) in the URL."
+    },
+    {
+      "feature": "slash_count",
+      "label": "Path Slash Count (/)",
+      "category": "Character Counts",
+      "importance": 0.0355,
+      "description": "Number of forward slashes ('/') in the URL path."
+    },
+    {
+      "feature": "hyphen_count",
+      "label": "Total Hyphen Count (-)",
+      "category": "Character Counts",
+      "importance": 0.033,
+      "description": "Total number of hyphen ('-') characters across the URL."
+    },
+    {
+      "feature": "subdomain_count",
+      "label": "Subdomain Depth",
+      "category": "Domain & Protocol",
+      "importance": 0.0307,
+      "description": "Number of subdomain levels preceding the registrable domain."
+    },
+    {
+      "feature": "suspicious_hostname_pattern",
+      "label": "Suspicious Hostname Pattern",
+      "category": "Deception & Obfuscation",
+      "importance": 0.0299,
+      "description": "Composite indicator for deceptive hostname structures (embedded TLD tokens, excessive hyphens, or high-risk TLD + lure combinations)."
+    },
+    {
+      "feature": "query_length",
+      "label": "Query String Length",
+      "category": "Length & Structure",
+      "importance": 0.0293,
+      "description": "Character length of the query parameter string."
+    },
+    {
+      "feature": "hostname_hyphen_count",
+      "label": "Hostname Hyphen Count",
+      "category": "Character Counts",
+      "importance": 0.0273,
+      "description": "Number of hyphen ('-') characters inside the hostname."
+    },
+    {
+      "feature": "path_length",
+      "label": "URL Path Length",
+      "category": "Length & Structure",
+      "importance": 0.0245,
+      "description": "Character length of the resource path component."
+    },
+    {
+      "feature": "digit_to_length_ratio",
+      "label": "Digit-to-Length Ratio",
+      "category": "Character Counts",
+      "importance": 0.0241,
+      "description": "Proportion of numeric characters relative to total URL length."
+    },
+    {
+      "feature": "hostname_length",
+      "label": "Hostname Length",
+      "category": "Length & Structure",
+      "importance": 0.0211,
+      "description": "Character length of the full hostname (including subdomains)."
+    },
+    {
+      "feature": "domain_length",
+      "label": "Registrable Domain Length",
+      "category": "Length & Structure",
+      "importance": 0.0158,
+      "description": "Character length of the base registrable domain."
+    },
+    {
+      "feature": "url_length",
+      "label": "Total URL Length",
+      "category": "Length & Structure",
+      "importance": 0.0153,
+      "description": "Total number of characters in the full URL string."
+    },
+    {
+      "feature": "query_param_count",
+      "label": "Query Parameter Count",
+      "category": "Length & Structure",
+      "importance": 0.0129,
+      "description": "Number of key-value parameters present in the URL query string."
+    },
+    {
+      "feature": "special_char_count",
+      "label": "Special Character Count",
+      "category": "Character Counts",
+      "importance": 0.0127,
+      "description": "Count of special URI symbols (?, =, &, %, @, ~, +, $, !, *, ;)."
+    },
+    {
+      "feature": "url_entropy",
+      "label": "URL Shannon Entropy",
+      "category": "Deception & Obfuscation",
+      "importance": 0.0108,
+      "description": "Information entropy (bits/char) measuring randomness across the full URL."
+    },
+    {
+      "feature": "hostname_entropy",
+      "label": "Hostname Shannon Entropy",
+      "category": "Deception & Obfuscation",
+      "importance": 0.0108,
+      "description": "Information entropy (bits/char) measuring randomness in the hostname."
+    },
+    {
+      "feature": "is_ip_address",
+      "label": "IP Literal Hostname",
+      "category": "Domain & Protocol",
+      "importance": 0.0,
+      "description": "Indicates whether the hostname is a raw IPv4/IPv6 address instead of a domain name."
+    },
+    {
+      "feature": "has_punycode",
+      "label": "Punycode (IDN) Indicator",
+      "category": "Deception & Obfuscation",
+      "importance": 0.0,
+      "description": "Detects 'xn--' internationalized domain encoding often abused in homograph attacks."
+    }
+  ]
+}

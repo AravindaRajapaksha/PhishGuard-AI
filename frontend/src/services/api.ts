@@ -8,9 +8,23 @@ import type {
   ScanResponse,
 } from "@/types/api";
 
-const RAW_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
-export const API_BASE_URL = RAW_BASE_URL.replace(/\/+$/, "");
+function resolveApiBaseUrl(): string {
+  const envUrl = import.meta.env.VITE_API_BASE_URL;
+  if (envUrl && envUrl.trim()) {
+    return envUrl.trim().replace(/\/+$/, "");
+  }
+  if (
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1")
+  ) {
+    return "http://localhost:8000";
+  }
+  // On Vercel or same-origin deployments, use relative /api/v1/* routes
+  return "";
+}
+
+export const API_BASE_URL = resolveApiBaseUrl();
 
 export class ApiError extends Error {
   status: number;

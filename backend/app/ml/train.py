@@ -453,6 +453,10 @@ def run_training_pipeline(version: str = DEFAULT_MODEL_VERSION) -> dict[str, Any
     artifact_dir.mkdir(parents=True, exist_ok=True)
 
     joblib.dump(winner["estimator"], artifact_dir / "model.joblib")
+    if hasattr(winner["estimator"], "get_booster"):
+        winner["estimator"].get_booster().save_model(
+            str(artifact_dir / "model_trees.json")
+        )
     if winner["uses_scaler"]:
         joblib.dump(scaler, artifact_dir / "scaler.joblib")
     elif (artifact_dir / "scaler.joblib").exists():

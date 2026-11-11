@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
+import os
 
 from fastapi import Depends, FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
@@ -42,6 +43,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origin_list,
+    allow_origin_regex=r"https://.*\.vercel\.app|http://localhost:\d+|http://127\.0\.0\.1:\d+",
     allow_credentials=True,
     allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
     allow_headers=["*"],
@@ -50,6 +52,9 @@ app.add_middleware(
 
 @app.middleware("http")
 async def add_security_headers(request: Request, call_next):  # type: ignore[no-untyped-def]
+    path = request.scope.get("path", "")
+    if path.startswith("/v1/"):
+        request.scope["path"] = f"/api{path}"
     response = await call_next(request)
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
@@ -91,6 +96,9 @@ app.include_router(scan.router)
 app.include_router(history.router)
 app.include_router(analytics.router)
 app.include_router(model.router)
+
+if os.getenv("VERCEL"):
+    init_db_and_sync_model_version()
 
 
 @app.get(
