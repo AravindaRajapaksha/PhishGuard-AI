@@ -58,12 +58,28 @@ Open `http://localhost:5173` in your browser.
 
 ## 2. Production Cloud Deployment
 
-### 2.1 Managed PostgreSQL Setup (Render PostgreSQL)
+PhishGuard AI supports two production deployment architectures:
+
+### Option A: Unified Single-Project Deployment on Vercel (Zero-Config Full-Stack)
+Both the React + Vite frontend and the FastAPI + XGBoost `v1.0.0` backend can be deployed together as a **single Vercel project**:
+1. Import `AravindaRajapaksha/PhishGuard-AI` in the [Vercel Dashboard](https://vercel.com/dashboard).
+2. Whether **Root Directory** is set to `frontend` or `.` (repository root):
+   - Vercel builds the React + TypeScript SPA (`dist/`).
+   - Vercel compiles `api/index.py` (`frontend/api/index.py` or root `api/index.py`) as a Python Serverless Function serving `/api/v1/*` on the **exact same domain**.
+   - `JsonXGBoostPredictor` loads the exported `XGBoost v1.0.0` decision trees (`model_trees.json`) in pure Python with 100% mathematical parity (`< 1e-8` delta) while keeping the serverless bundle under 20 MB.
+   - No `VITE_API_BASE_URL` is needed because the frontend automatically detects non-localhost origins and routes requests to same-origin `/api/v1/*`.
+   - By default on Vercel, scan history is stored in `/tmp/phishguard.db` (or you can optionally add a `DATABASE_URL` environment variable pointing to Neon/Supabase/Render PostgreSQL for permanent cross-instance persistence).
+
+---
+
+### Option B: Dedicated Render Docker Backend + Vercel Frontend
+
+#### 2.1 Managed PostgreSQL Setup (Render PostgreSQL)
 1. In the [Render Dashboard](https://dashboard.render.com/), click **New +** $\rightarrow$ **PostgreSQL**.
 2. Name the instance `phishguard-ai-db`, select a region, and create the database.
 3. Copy the **Internal Database URL** (or External Database URL). Note that PhishGuard AI's `config.py` automatically normalizes `postgres://` and `postgresql://` connection strings to `postgresql+psycopg://` for SQLAlchemy 2.0 + `psycopg` v3 compatibility.
 
-### 2.2 Backend Deployment on Render (`backend/`)
+#### 2.2 Backend Deployment on Render (`backend/`)
 1. In Render, click **New +** $\rightarrow$ **Web Service** and connect the GitHub repository `https://github.com/AravindaRajapaksha/PhishGuard-AI.git`.
 2. Configure the service:
    - **Root Directory:** `backend`
@@ -77,13 +93,13 @@ Open `http://localhost:5173` in your browser.
    - `RATE_LIMIT_PER_MINUTE` = `30`
 4. Deploy the service. On startup, `main.py` automatically initializes the schema and synchronizes the `v1.0.0` XGBoost artifact into `model_versions`.
 
-### 2.3 Frontend Deployment on Vercel (`frontend/`)
+#### 2.3 Frontend Deployment on Vercel (`frontend/`)
 1. In the [Vercel Dashboard](https://vercel.com/dashboard), click **Add New Project** and import `AravindaRajapaksha/PhishGuard-AI`.
 2. Configure the project:
    - **Root Directory:** `frontend`
    - **Framework Preset:** `Vite`
    - **Build Command:** `npm run build`
    - **Output Directory:** `dist`
-3. Add Environment Variable:
+3. *(Optional if using external Render backend)* Add Environment Variable:
    - `VITE_API_BASE_URL` = `https://<your-render-backend>.onrender.com`
-4. Click **Deploy**. `frontend/vercel.json` automatically configures SPA client-side routing rewrites for `/scanner`, `/history`, `/analytics`, `/model-insights`, and `/about`.
+4. Click **Deploy**. `frontend/vercel.json` automatically routes `/api/*` to the serverless backend (when `VITE_API_BASE_URL` is unset) and SPA client-side routes (`/scanner`, `/history`, `/analytics`, `/model-insights`, `/about`) to `/index.html`.
